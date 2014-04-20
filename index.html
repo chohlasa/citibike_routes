@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript"
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAElV7Ow31FcKtJeoN6Fqn47-7fL4nV1Kg&sensor=false">
+</script>
+<link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
+<!--[if lte IE 8]>
+<link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.ie.css" />
+<![endif]-->
+<script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+
+<style>
+
+ html, body {width:100%; height:100%; padding: 0; margin: 0;}
+
+ text, h1, h2, h3, h4, h5, h6, body {font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+			       margin:0; color: #555; }
+
+ .content {width: 940px; margin-left: auto; margin-right: auto;}
+
+ #header {padding: 15px 0px; margin-bottom: 10px; width:100%; position: fixed; z-index: 10; background-color: white; }
+
+ .section {padding: 5px 0px;}
+ .section p , .section li {font-size: 1.2em; line-height: 170%;}
+ .section h2 {padding-top: 20px;}
+
+ #bike_map {width: 100%; height: 800px; margin: 10px 0px 30px 0px; }
+
+ .selections {padding: 0px 10px; vertical-align: text-top; width:  }
+ .selections h2, h3 {padding-top: 15px; }
+ .selections h3 {font-style: italic; }
+ .selections text { font-size: 0.9em; }
+
+ .link { cursor: pointer; cursor: hand; padding-top: 5px; }
+ .map.link {display:block;}
+ .link:hover { background-color: #EEE; }
+
+ .selected { background-color: #EEE; font-weight: 900; }
+
+</style>
+
+</head>
+
+<body>
+
+  <div id="header">
+    <div class="content">
+      <h1>CitiBike Routes</h1>
+      <hr>
+      <h4>Alex Chohlas-Wood, NYU CUSP</h4>
+      <h4><a href="http://twitter.com/lx_cw">Twitter</a>/<a href="mailto:chohlasa@gmail.com">Email</a></h4>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+        <div class="content">
+    <div class="section" id="introduction">
+      <p>Curious where most CitiBike rides go? This map shows potential routes for most rides -- from July 2013 through February 2014.</p>
+    </div>
+  </div>
+  <div id="bike_map"></div>
+  <div class="content">
+    <div class="section">
+<h2>Notes</h2>
+
+<p>These bike routes were calculated using Google Directions, so it doesn&#8217;t represent where people actually traveled. But it can give us a rough sense of where people might have traveled. </p>
+
+<p>Even though Google steers bikes towards bike lanes, I wanted to see if any particular route had potential high demand but no bike facilities. </p>
+
+<p>Perhaps the biggest surprise was on 42nd Street, a busy crosstown arterial with no bike lanes. Just south of Grand Central, there was demand for about about 230 rides/day, or around 56,000 rides total. </p>
+
+<p>I was also surprised to see how much crosstown rides there were in Midtown, but many of these streets are narrow and quieter than the avenues, and may not necessarily need bike lanes.</p>
+
+<p>Finally, a note from personal experience. I ride fairly frequently on 3rd/Great Jones Streets, just southeast of Washington Square Park. This road &#8211; covered in uneven pavement and potholes, and lacking a bike lane &#8211; may have seen around 40,000 rides over this time period. From personal experience I can say that this is a pretty rough stretch. </p>
+
+<h2>Methodology</h2>
+
+<p>First, I downloaded the entire CitiBike dataset, available <a href="http://citibikenyc.com/system-data">here</a>. I accessed the data on April 1st, 2014. The period of analysis runs from July 1st, 2013 to February 28th, 2014.</p>
+
+<p>Next, I compiled a list of all start and end stations for all rides. Since Google&#8217;s Directions API only allows for 2,500 queries/day, I ran bike directions for 2,500 station pairs every 24 hours. I was able to acquire routes for most of the rides.</p>
+
+<p>Google Directions provides a &#8220;polyline&#8221;, which you can decode into straight segments of lat/long pairs. Luckily, segments from two routes that overlap are identical. After disaggregating Google&#8217;s route polylines into straight-line segments, I re-aggregated the segments if they were spatially identical. This included segments that were spatially identical but inverted. Finally, the segments were exported to GeoJSON and mapped with CartoDB.</p>
+
+<h2>Github</h2>
+
+<p>If you&#8217;re curious or want to expand on this yourself, here&#8217;s <a href="https://github.com/chohlasa/citibike_routes">my repository for this project</a>.</p>
+    </div>
+  </div>
+  <div class="spacer"></div>
+</body>
+
+<script type="text/javascript">
+
+ $('.spacer').height(function() { return $('#header').outerHeight(true) - 20; });
+
+ var mapCSS = {
+   population: "#vis_data { polygon-opacity: 0.8; line-color: #DDD; line-width: 0.25; line-opacity: 1; polygon-fill: #B10026; } #vis_data [ total_population <= 1767] {   polygon-fill: #B10026;}#vis_data [ total_population <= 1034] {   polygon-fill: #E31A1C;}#vis_data [ total_population <= 684] {   polygon-fill: #FC4E2A;}#vis_data [ total_population <= 559] {   polygon-fill: #FD8D3C;}#vis_data [ total_population <= 375] {   polygon-fill: #FEB24C;}#vis_data [ total_population <= 200] {   polygon-fill: #FED976;}#vis_data [ total_population <= 182] {   polygon-fill: #FFFFB2;}#vis_data [ total_population <= 15] {   polygon-fill: #BBB;}"
+,
+   density: "#vis_data{  polygon-opacity: 0.8;  line-color: #DDD;  line-width: 0.5;  line-opacity: 1;} #vis_data [ total_population <= 75.724159016339] {   polygon-fill: #B10026;} #vis_data [ total_population <= 42.6821497291779] {   polygon-fill: #E31A1C;}#vis_data [ total_population <= 30.8545416849473] {   polygon-fill: #FC4E2A;}#vis_data [ total_population <= 20.491274339861] {   polygon-fill: #FD8D3C;}#vis_data [ total_population <= 15.09629362344672] {   polygon-fill: #FEB24C;}#vis_data [ total_population <= 12.60580181990758] {   polygon-fill: #FED976;}#vis_data [ total_population <= 10.57900798530735] {   polygon-fill: #FFFFB2;}#vis_data [ total_population <= 2.40798530735] {   polygon-fill: #BBB;}"
+ };
+
+ function initialize() {
+   var mapOptions = {
+     center: new google.maps.LatLng(40.73, -73.99),
+     zoom: 13
+   };
+   var map = new google.maps.Map(document.getElementById("bike_map"),
+				 mapOptions);
+
+   var styles = [{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers":[{"gamma":1.67},{"lightness":27}]},{"elementType":"geometry","stylers":[{"gamma":1.31},{"lightness":12}]},{"featureType":"administrative","elementType":"labels","stylers":[{"lightness":51},{"gamma":0.94}]},{},{"featureType":"road","elementType":"labels","stylers":[{"lightness":0}]},{"featureType":"poi","elementType":"labels","stylers":[{"lightness":42}]}]
+
+   map.setOptions({styles: styles, minZoom: 13, maxZoom:17, scrollwheel:false});
+
+   // create layer and add to the map, then add some intera
+   cartodb.createLayer(map, 'http://chohlasa.cartodb.com/api/v2/viz/4b86adf8-c8c0-11e3-adb2-0e73339ffa50/viz.json')
+          .addTo(map)
+          .on('done', function(layer) {
+     var sublayer = layer.getSubLayer(0);
+
+     sublayer.on('error', function(err) {
+       cartodb.log.log('error: ' + err);
+     });
+
+   })
+		  .on('error', function() {
+     cartodb.log.log("some error occurred");
+   });
+   
+}
+ google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
+</html>
