@@ -9,6 +9,11 @@ var styles = [{"stylers":[{"saturation":-100}]},{"featureType":"water","stylers"
 
 // Set height of header spacer
 $('.spacer').height(function() { return $('#header').outerHeight(true) - 20; });
+
+// Set height of map container based on browser height
+$('#bike_container').height(function() {return $(window).height()*0.8; });
+
+
 var map;
 
 // Setup map
@@ -36,7 +41,12 @@ var map;
 google.maps.event.addDomListener(window, 'load', initialize);
 
 $('.Fst_Ave').click(function() {
-    map.panTo(new google.maps.LatLng(40.727011, -73.986203));
+    map.panTo(new google.maps.LatLng(40.725332, -73.985574));
+    map.setZoom(16);
+});
+
+$('.Snd_Ave').click(function() {
+    map.panTo(new google.maps.LatLng(40.725584, -73.988450));
     map.setZoom(16);
 });
 
@@ -46,6 +56,11 @@ $('.Broadway').click(function() {
 });
 
 $('.Eth_Ave').click(function() {
+    map.panTo(new google.maps.LatLng(40.747843, -73.995050));
+    map.setZoom(16);
+});
+
+$('.Nth_Ave').click(function() {
     map.panTo(new google.maps.LatLng(40.747790, -73.998584));
     map.setZoom(16);
 });
@@ -56,12 +71,12 @@ $('.HRG').click(function() {
 });
 
 $('.FrtySnd').click(function() {
-    map.panTo(new google.maps.LatLng(40.752373, -73.978610));
+    map.panTo(new google.maps.LatLng(40.751381, -73.980611));
     map.setZoom(16);
 });
 
 $('.Seventh').click(function() {
-    map.panTo(new google.maps.LatLng(40.746960, -73.993158));
+    map.panTo(new google.maps.LatLng(40.745860, -73.993158));
     map.setZoom(16);
 });
 

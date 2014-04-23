@@ -20,9 +20,9 @@
  text, h1, h2, h3, h4, h5, h6, body {font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 			       margin:0; color: #555; }
 
- #content {max-width: 900px; margin-left: auto; margin-right: auto; position: relative;}
+ #content {width: 900px; margin-left: auto; margin-right: auto; position: relative;}
  #header {padding-top: 15px; margin-bottom: 10px; position:fixed; width:900px; z-index: 10; background-color: white;}
- .copy {max-width: 425px; padding-left: 10px; padding-right: 10px;}
+ .copy {width: 425px; padding-left: 10px; padding-right: 10px;}
 
  .inline {display: inline;}
  .right {float:right;}
@@ -33,8 +33,9 @@
  .section p , .section li {font-size: 1.2em; line-height: 170%;}
  .section h2 {padding-top: 20px;}
 
- #bike_container, #bike_map {width: 425px; height: 800px;}
+ #bike_container {width: 425px; height: 800px;}
  #bike_container { margin: 30px 0px 30px 0px; position:fixed; display:inline-block; }
+ #bike_map {width: inherit; height: inherit;}
 
  .link { cursor: pointer; cursor: hand; padding-top: 5px; text-decoration:underline; }
  .link:hover { background-color: #EEE; }
@@ -68,9 +69,9 @@
 
 <p>Curious where CitiBike rides go? This map shows potential routes for most rides from July 2013 through February 2014.</p>
 
-<p>These bike routes were calculated using Google Directions, so they are only <strong>appoximations</strong> of travel paths, rather than actual travel paths. Also important to note: there is no evidence to believe CitiBike riders represent the typical bike user in New York City.</p>
+<p>These bike routes were calculated using Google Directions, so they are only <strong>approximations</strong> of travel paths, rather than actual travel paths. Also important to note: there is no evidence to believe CitiBike riders represent the typical bike user in New York City.</p>
 
-<p>On one hand, these routes demonstrate how bike lanes (shown in dashed black lines) are already structured to handle much of the potential bike traffic. Lanes on <span class="Fst_Ave link">1st Avenue</span>, <span class="Fst_Ave link">2nd Avenue</span>, <span class="Broadway link">Broadway</span>, <span class="Eth_Ave link">8th Avenue</span>, and <span class="Eth_Ave link">9th Avenue</span> could each be absorbing upwards of 600 CitiBike rides/day. Similar ridership numbers exist for long sections of the <span class="HRG link">Hudson River Greenway</span>. The network is so complete that much of the estimated high ridership seems to never leave a path.</p>
+<p>On one hand, these routes demonstrate how bike lanes (shown in dashed black lines) are already structured to handle much of the potential bike traffic. Lanes on <span class="Fst_Ave link">1st Avenue</span>, <span class="Snd_Ave link">2nd Avenue</span>, <span class="Broadway link">Broadway</span>, <span class="Eth_Ave link">8th Avenue</span>, and <span class="Nth_Ave link">9th Avenue</span> could each be absorbing upwards of 600 CitiBike rides/day. Similar ridership numbers exist for long sections of the <span class="HRG link">Hudson River Greenway</span>. The network is so complete that much of the estimated high ridership seems to never leave a path.</p>
 
 <p>But I wanted to see if this data could also illustrate where demand may exist for new bike lanes. Even though Google Directions steers riders towards safe bike facilities, I thought that particular streets might lack bike lanes but feature high demand. </p>
 
@@ -86,7 +87,7 @@
 
 <p>I downloaded the entire CitiBike dataset, available <a href="http://citibikenyc.com/system-data">here</a>. I accessed the data on April 1st, 2014. The period of analysis runs from July 1st, 2013 to February 28th, 2014.</p>
 
-<p>Next, I compiled a list of all start and end stations for all rides. Since Google&#8217;s Directions API only allows for 2,500 queries/day, I ran bike directions for 2,500 station pairs every 24 hours. I was able to acquire routes for most of the rides.</p>
+<p>Next, I compiled a list of all start and end stations for all rides. Many of the most popular departure/arrival pairs were the same exact stations, presumably for people taking more of a joy ride. Since there was no predictable path for these rides, I excluded them from analysis. Also, since Google&#8217;s Directions API only allows for 2,500 queries/day, I was unable to get directions for every possible station pair -- but still captured the vast majority of rides.</p>
 
 <p>Google Directions provides a &#8220;polyline&#8221;, which you can decode into straight segments of lat/long pairs. Luckily, segments from two routes that overlap are identical. After disaggregating Google&#8217;s route polylines into straight-line segments, I re-aggregated the segments if they were spatially identical. This included segments that were spatially identical but inverted. Finally, the segments were exported to GeoJSON and mapped with CartoDB.</p>
 
